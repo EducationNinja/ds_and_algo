@@ -1,36 +1,55 @@
 class Node:
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, name):
+        self.name = name
         self.children = []
-        # self.left_child = None
-        # self.right_child = None
 
     def add_child(self, node):
-        self.children.append(node)
+        if len(self.children) < 2:
+            self.children.append(node)
+            print(f"{node.name} added to the {self.name}!")
+        else:
+            print("You already got two kids. Sorry, you can't have more!")
 
     def remove_child(self, node):
-        # self.children = [child for child in self.children if child is not node]
-        new_children = []
-        for child in self.children:
-            if not child == node:
-                new_children.append(child)
-        self.children = new_children
+        self.children = [child for child in self.children if child is not node]
 
     def traverse(self):
         nodes = [self]
         while len(nodes) != 0:
             current_node = nodes.pop()
-            print(current_node.data)
+            print(current_node.name)
             nodes += current_node.children
 
-root = Node("Darth Vader")
-child_1 = Node("Luke Skywalker")
-child_2 = Node("Leia Organa")
-child_3 = Node("Kylo Ren")
+    def get_child_with_name(self, name):
+        for child in self.children:
+            if child.name == name:
+                return child
+        return None
 
-root.add_child(child_1)
-root.add_child(child_2)
-root.remove_child(child_1)
-child_2.add_child(child_3)
+
+root = Node("Builder")
+full_name = input("Enter the full name (done if you're finished): ")
+while full_name != "done":
+    current_node = root
+
+    names = full_name.split()[::-1]
+    first_name = names.pop()
+    last_name = names.pop(0)
+
+    if current_node.name == last_name:
+        if names:
+            for name in names:
+                child = current_node.get_child_with_name(name)
+                if child:
+                    current_node = child
+                else:
+                    new_node = Node(name)
+                    current_node.add_child(new_node)
+                    current_node = new_node
+
+        current_node.add_child(Node(first_name))
+
+    print("-"*30)
+    full_name = input("Enter the full name (done if you're finished): ")
 
 root.traverse()
